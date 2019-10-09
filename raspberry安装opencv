@@ -84,46 +84,67 @@ $ sudo apt-get -y install build-essential cmake cmake-qt-gui pkg-config
 $ sudo apt-get install libgtk2.0-dev
 /******/
 
-##
-编译安装 opencv
+### 编译安装 OpenCV
+```
 mkdir build
 cd build
 cmake -D CMAKE_BUILD_TYPE=RELEASE \
       -D CMAKE_INSTALL_PREFIX=/usr/local \
       -D INSTALL_C_EXAMPLES=ON \
       -D INSTALL_PYTHON_EXAMPLES=ON \
-      -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-3.0.0/modules \
-      -D BUILD_EXAMPLES=ON ..
-make -j4
-make clean
-make
+      -D BUILD_EXAMPLES=ON \
+      -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-3.0.0/modules \ ## 加入额外库编译 建议路径使用绝对路径
+      -D OPENCV_GENERATE_PKGCONFIG=ON \ ## 使能pkgconfig设置 4.0版本后如果不主动打开不会产生opencv.pc文件 库搜索应该使用opencv4而不是原先的opencv
+      ###### 额外选项
+      -D WITH_CUDA=ON \
+      -D WITH_CUBLAS=1 \
+      -D ENABLE_FAST_MATH=1 \
+      -D CUDA_FAST_MATH=1 \
+      -D WITH_CUFFT=ON \
+      -D WITH_NVCUVID=ON \
+      -D WITH_V4L=ON \
+      -D WITH_LIBV4L=ON \
+      -D WITH_OPENGL=ON \
+      -D WITH_FFMPEG=ON \
+      -D BUILD_TIFF=ON \
+      -D WITH_LAPACK=OFF..
+      -D INSTALL_C_EXAMPLES=ON \
+      ..
+sudo make -j4 ## 根据自己的处理器选择
+sudo make clean ## 慎用 如果你想再喝一杯咖啡
 sudo make install
-sudo ldconfig
+```
 
-##
-配置opencv环境
-
-1：
-安装完需要配置环境，树莓派可以使用vim，输入命令如下：
+### 配置 OpenCV 环境变量
+```
+### 编辑或新建 /etc/ld.so.conf.d/opencv.conf
 sudo vim /etc/ld.so.conf.d/opencv.conf
 
-打开以后文件是空的什么也没有，添加下面这一句：
+### 添加下面这一句 表明opencv库的位置
 /usr/local/lib
 
-保存后退出，再输入命令：
+### 保存后退出，再输入命令
 sudo ldconfig
 
-2：
-然后更改环境变量，输入命令：
+### 然后更改环境变量，输入命令
 sudo gedit /etc/bash.bashrc
 
-打开之后，在文件最后面输入以下内容:
+### 打开之后，在文件最后面输入以下内容:
 PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig 
 export PKG_CONFIG_PATH
+source ~/.bashrc
 
-保存退出，opencv基本上就安装完成了。
+### 保存退出
+```
 
+### OpenCV库信息和版本查看
 
+```
+### 4.1.1版本需要使用opencv4查看
+pkg-config --modversion opencv4
+pkg-config --libs opencv4
+pkg-config --cflags opencv4
+```
 
 ##
 安装CMake等编译openCV源码的工具
