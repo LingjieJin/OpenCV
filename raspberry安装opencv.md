@@ -116,6 +116,7 @@ sudo make install
 ```
 
 ### 配置 OpenCV 环境变量
+
 ```
 ### 编辑或新建 /etc/ld.so.conf.d/opencv.conf
 sudo vim /etc/ld.so.conf.d/opencv.conf
@@ -146,6 +147,30 @@ pkg-config --libs opencv4
 pkg-config --cflags opencv4
 ```
 
+### 使用 cmake 编译 OpenCV 项目
+
+```
+### 新建CMakeLists.txt文件并添加以下内容
+set(OpenCV_DIR /usr/local/share/OpenCV)
+find_package(OpenCV 4.0.1 REQUIRED)
+include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS} /usr/local/include)
+```
+```
+cmake_minimum_required(VERSION 2.8)
+project( DisplayImage )
+set(OpenCV_DIR /usr/local/opencv-4.0.1/lib/cmake/opencv4)
+find_package(OpenCV REQUIRED )
+add_executable( opencv_test opencv_test.cpp )
+target_link_libraries( opencv_test ${OpenCV_LIBS} )
+```
+
+```
+### 执行
+cmake . -DCMAKE_CXX_FLAGS="-std=c++11" # opencv4.0 需要 c++ 11 支持
+make
+./opencv_test test.jpg
+```
+
 ##
 安装CMake等编译openCV源码的工具
 
@@ -163,4 +188,60 @@ sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
 
   sudo apt-get install libatlas-base-dev gfortran
 
+### 安装过程遇到的问题
 
+***
+
+#### 编译安装 ippicv 库的特别慢的解决办法
+
+1.下载地址 直接访问OpenCV在Github上的opencv_3rdparty也可以找到文件的具体地址 https://github.com/opencv/opencv_3rdparty/tree/ippicv/master_20170418/ippicv
+
+2.修改cmake 
+将 opencv/3rdparty/ippicv文件夹下的 ippicv.cmake中，第47行
+```
+https://raw.githubusercontent.com/opencv/opencv_3rdparty/${IPPICV_COMMIT}/ippicv/
+改成： 
+file://{刚刚手动下载的IPP文件的上一级目录}/
+```
+
+参考：
+[1](https://yinguobing.com/install-ippcv-manually/)
+[2](https://www.cnblogs.com/yongy1030/p/10293178.html)
+
+***
+
+***
+#### OpenCV 4.0.1 CUDA 编译问题
+1.设置 --DWITH_CUDA=ON 时需要设置 -DOPENCV_EXTRA_MODULES_PATH=<opencv_contrib>/modules
+
+2.如果没有contrib额外库, make 的时候会出现错误：gpu_mat.cu:47:2: error: #error "opencv_cudev is required".
+Github - opencv_contrib
+
+3.在 opencv_contrib/modules/face 中会要下载 face_landmark_model.dat 文件(69M)，也会遇到下载慢的问题，可以采用类似于 ippicv 库的处理方式.
+
+face_landmark_model.mat 下载路径：
+
+https://github.com/opencv/opencv_3rdparty/tree/contrib_face_alignment_20170818
+
+在opencv_contrib/modules/face/CMakeLists.txt 文件：
+```
+set(__commit_hash "8afa57abc8229d611c4937165d20e2a2d9fc5a12")
+set(__file_hash "7505c44ca4eb54b4ab1e4777cb96ac05")
+ocv_download(
+    FILENAME face_landmark_model.dat
+    HASH ${__file_hash}
+    URL
+      "${OPENCV_FACE_ALIGNMENT_URL}"
+      "$ENV{OPENCV_FACE_ALIGNMENT_URL}"
+      "https://raw.githubusercontent.com/opencv/opencv_3rdparty/${__commit_hash}/"
+    DESTINATION_DIR "${CMAKE_BINARY_DIR}/${OPENCV_TEST_DATA_INSTALL_PATH}/cv/face/"
+    ID "data"
+    RELATIVE_URL
+    STATUS res
+)
+if(NOT res)
+  message(WARNING "Face: Can't get model file for face alignment.")
+endif()
+```
+将离线下载的 face_landmark_model.dat 放到 /opt/opencv-4.0.1/build/share/opencv4/testdata/cv/face/ 路径中.
+***
