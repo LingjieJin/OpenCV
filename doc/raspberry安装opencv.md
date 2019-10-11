@@ -333,5 +333,7 @@ ref:https://github.com/opencv/opencv/pull/15225
 ref:https://github.com/opencv/opencv/issues/15495
 ref:https://github.com/opencv/opencv/issues/15278
 ref:https://github.com/opencv/opencv/issues/15192
+
+加上-DOPENCV_EXTRA_EXE_LINKER_FLAGS=-latomic解决atomic不能找到问题
 加上-DENABLE_PRECOMPILED_HEADERS=OFF 能解决大部分问题
 ***
