@@ -325,3 +325,13 @@ sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
 将库链接设置一下
 ok
 ***
+
+***
+### 在Raspberry上编译opencv4.1.1遇到的问题
+ref:https://github.com/opencv/opencv/issues/13328
+ref:https://github.com/opencv/opencv/pull/15225
+ref:https://github.com/opencv/opencv/issues/15495
+ref:https://github.com/opencv/opencv/issues/15278
+ref:https://github.com/opencv/opencv/issues/15192
+加上-DENABLE_PRECOMPILED_HEADERS=OFF 能解决大部分问题
+***
