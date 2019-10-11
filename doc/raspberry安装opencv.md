@@ -42,7 +42,8 @@ sudo apt-get install build-essential \
                      libgtk2.0-dev \
                      pkg-config \
                      libavcodec-dev \
-                     libavformat-dev 
+                     libavformat-dev
+## sudo apt-get install build-essential libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev
 ```
 
 2.官方建议依赖库
@@ -55,14 +56,12 @@ sudo apt-get install python-dev \
                      libtiff-dev \
                      libjasper-dev \
                      libdc1394-22-dev
+## sudo apt-get install python-dev libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
 ```
 
 3.opengl支持依赖库
 ```
-sudo apt-get install freeglut3-dev \
-                     mesa-common-dev \
-                     libgtkglext1 \
-                     libgtkglext1-dev
+sudo apt-get install freeglut3-dev mesa-common-dev libgtkglext1 libgtkglext1-dev
 ```
 
 4.视频解码支持依赖库
@@ -81,6 +80,8 @@ sudo apt-get install checkinstall \
                      libxvidcore-dev \
                      x264 \
                      v4l-utils
+
+## sudo apt-get install yasm libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libgtk2.0-dev libmp3lame-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils
 ```
 
 5.其他依赖
@@ -95,6 +96,7 @@ sudo apt-get install libgphoto2-dev \
                      liblept5 \
                      leptonica-progs \
                      libleptonica-dev
+## sudo apt-get install libgphoto2-dev libavresample-dev liblapacke-dev gtk+-3.0 libgtk-3-dev libeigen3-dev tesseract-ocr liblept5 leptonica-progs libleptonica-dev
 ```
 
 ***
