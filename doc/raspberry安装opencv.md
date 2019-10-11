@@ -347,4 +347,9 @@ ref:https://github.com/opencv/opencv/issues/15192
 
 加上-DOPENCV_EXTRA_EXE_LINKER_FLAGS=-latomic解决atomic不能找到问题
 加上-DENABLE_PRECOMPILED_HEADERS=OFF 能解决大部分问题
+
+### issues Undefined reference to __atomic_xxx #15278
+ref:https://github.com/opencv/opencv/issues/15278
+-DCMAKE_CXX_FLAGS=-latomic -DOPENCV_EXTRA_EXE_LINKER_FLAGS=-latomic
+
 ***
