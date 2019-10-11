@@ -313,3 +313,15 @@ endif()
 ```
 将离线下载的 face_landmark_model.dat 放到 /opt/opencv-4.0.1/build/share/opencv4/testdata/cv/face/ 路径中.
 ***
+
+***
+### 25% fatal error: Eigen/Core: No such file or directory
+解决方法有很挺多的，具体可以看这里：
+https://github.com/opencv/opencv/issues/14868
+在我的机子上使用一下方式：
+```
+sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
+```
+将库链接设置一下
+ok
+***
