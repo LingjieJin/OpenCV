@@ -154,6 +154,15 @@ $ sudo apt-get -y install build-essential cmake cmake-qt-gui pkg-config
 $ sudo apt-get install libgtk2.0-dev
 /******/
 
+
+
+### 下载 OpenCV
+```
+git clone https://github.com/opencv/opencv.git
+git clone https://github.com/opencv/opencv_contrib.git
+```
+
+
 ### 编译安装 OpenCV
 ```
 mkdir build
