@@ -1,0 +1,207 @@
+### Raspberry 3B+ 
+### Raspbian buster
+### opencv 4.1.1
+### opencv_contrib 4.1.1
+
+## 1.烧录树莓派镜像文件
+## 2.在boot目录下新建ssh空白文件，可以通过ssh登录树莓派
+## 3.进入树莓派系统，修改软件源
+清华大学源地址：https://mirrors.tuna.tsinghua.edu.cn/help/raspbian/
+···
+cd /etc/apt/
+
+# 编辑 `/etc/apt/sources.list` 文件，删除原文件所有内容，用以下内容取代：
+deb http://mirrors.tuna.tsinghua.edu.cn/raspbian/raspbian/ buster main non-free contrib
+deb-src http://mirrors.tuna.tsinghua.edu.cn/raspbian/raspbian/ buster main non-free contrib
+
+# 编辑 `/etc/apt/sources.list.d/raspi.list` 文件，删除原文件所有内容，用以下内容取代：
+deb http://mirrors.tuna.tsinghua.edu.cn/raspberrypi/ buster main ui
+···
+## 4.更新 apt-get update apt-get upgrade
+
+## 1.使能树莓派摄像头
+sudo raspi-config
+进入interface option选项 选择 camera 使能
+系统会自动重启
+
+## 2. 重启后可以查看是否有摄像头
+ls -al /dev/ | grep video
+```
+root@raspberrypi:/home/pi# ls -al /dev/ |grep video
+crw-rw----   1 root video    29,   0 Oct 21 07:45 fb0
+crw-rw----   1 root video   241,   0 Oct 21 07:45 media0
+crw-rw----   1 root video   243,   0 Oct 21 07:45 vchiq
+crw-rw----   1 root video   248,   0 Oct 21 07:45 vcio
+crw-rw----   1 root video   244,   0 Oct 21 07:45 vcsm
+crw-rw----+  1 root video    81,   3 Oct 21 07:45 video0
+crw-rw----+  1 root video    81,   0 Oct 21 07:45 video10
+crw-rw----+  1 root video    81,   1 Oct 21 07:45 video11
+crw-rw----+  1 root video    81,   2 Oct 21 07:45 video12
+```
+
+## 3.使用树莓派摄像头获取图片
+raspistill -o image.jpg
+
+
+
+
+
+# 编译opencv
+
+## 设置系统交换空间
+## 系统优化设置：增加swap空间 
+
+```
+cd /opt 
+sudo mkdir image 
+cd image
+sudo touch swap 
+sudo dd if=/dev/zero of=/opt/image/swap bs=1024 count=2048000 
+## 过一段时间会返回信息，这个过程有点小长，注意不是死机了，耐心等一等。
+## 返回的信息大概是： 2048000+0 records in 2048000+0 records out 2097152000 bytes (2.1 GB, 2.0 GiB) copied, 242.095 s, 8.7 MB/s
+
+sudo mkswap /opt/image/swap 
+## 检查现有的交换空间大小，使用命令free
+free -m
+
+## 启动新增加的2G的交换空间，使用命令swapon：
+sudo swapon /opt/image/swap
+
+## 确认新增加的2G交换空间已经生效，使用命令free 
+free -m
+
+## 修改/etc/fstab文件，使得新加的2G交换空间在系统重新启动后自动生效 
+sudo vim /etc/fstab
+## 在文件最后加入： 
+/opt/image/swap /swap swap defaults 0 0
+
+sudo reboot
+
+```
+
+## 依赖库安装
+
+
+1.官方必须依赖库
+```
+sudo apt-get update
+
+sudo apt-get install cmake git
+
+sudo apt-get install build-essential \
+                     libgtk2.0-dev \
+                     pkg-config \
+                     libavcodec-dev \
+                     libavformat-dev 
+## sudo apt-get install -y build-essential libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev 
+```
+
+2.官方建议依赖库
+```
+sudo apt-get install python-dev \
+                     libtbb2 \
+                     libtbb-dev \
+                     libjpeg-dev \
+                     libpng-dev \
+                     libtiff-dev \
+                     libjasper-dev \
+                     libdc1394-22-dev
+## sudo apt-get install -y python-dev libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+```
+
+3.opengl支持依赖库
+```
+sudo apt-get install -y freeglut3-dev mesa-common-dev libgtkglext1 libgtkglext1-dev
+```
+
+4.视频解码支持依赖库
+```
+sudo apt-get install checkinstall \
+                     yasm \
+                     libgstreamer0.10-dev \
+                     libgstreamer-plugins-base0.10-dev \
+                     libv4l-dev \
+                     libtbb-dev \
+                     libqt4-dev \
+                     libgtk2.0-dev \
+                     libmp3lame-dev \
+                     libtheora-dev \
+                     libvorbis-dev \
+                     libxvidcore-dev \
+                     x264 \
+                     v4l-utils
+
+## sudo apt-get install -y yasm libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libgtk2.0-dev libmp3lame-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils
+```
+
+5.其他依赖
+```
+sudo apt-get install libgphoto2-dev \
+                     libavresample-dev \ 
+                     liblapacke-dev \
+                     gtk+-3.0 \
+                     libgtk-3-dev \ 
+                     libeigen3-dev \ 
+                     tesseract-ocr \
+                     liblept5 \
+                     leptonica-progs \
+                     libleptonica-dev
+## sudo apt-get install -y libgphoto2-dev libavresample-dev liblapacke-dev gtk+-3.0 libgtk-3-dev libeigen3-dev tesseract-ocr liblept5 leptonica-progs libleptonica-dev
+```
+
+
+下载 OpenCV
+```
+git clone https://github.com/opencv/opencv.git
+git clone https://github.com/opencv/opencv_contrib.git
+```
+
+编译安装OpenCV 和 OpenCV_contribute
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+      -D CMAKE_INSTALL_PREFIX=/usr/local \
+      -D INSTALL_C_EXAMPLES=ON \
+      -D INSTALL_PYTHON_EXAMPLES=ON \
+      -D BUILD_EXAMPLES=ON \
+      -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-3.0.0/modules \ ## 加入额外库编译 建议路径使用绝对路径
+      -D ENABLE_PRECOMPILED_HEADERS=OFF
+      -D OPENCV_GENERATE_PKGCONFIG=ON \ ## 使能pkgconfig设置 4.0版本后如果不主动打开不会产生opencv.pc文件 库搜索应该使用opencv4而不是原先的opencv
+      ###### 额外选项
+      -D WITH_CUDA=ON \
+      -D WITH_CUBLAS=1 \
+      -D ENABLE_FAST_MATH=1 \
+      -D CUDA_FAST_MATH=1 \
+      -D WITH_CUFFT=ON \
+      -D WITH_NVCUVID=ON \
+      -D WITH_V4L=ON \
+      -D WITH_LIBV4L=ON \
+      -D WITH_OPENGL=ON \
+      -D WITH_FFMPEG=ON \
+      -D BUILD_TIFF=ON \
+      -D WITH_LAPACK=OFF..
+      -D INSTALL_C_EXAMPLES=ON \
+      ..
+sudo make -j4 ## 根据自己的处理器选择
+sudo make clean ## 慎用 如果你想再喝一杯咖啡
+sudo make install
+
+
+### 在树莓派和ubuntu系统上都曾碰到同一个问题 需要加入-D ENABLE_PRECOMPILED_HEADERS=OFF选项才能继续编译
+### 这里列出我编译时候的指令
+```
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+      -D CMAKE_INSTALL_PREFIX=/usr/local \
+      -D INSTALL_C_EXAMPLES=ON \
+      -D INSTALL_PYTHON_EXAMPLES=ON \
+      -D BUILD_EXAMPLES=ON \
+      -D ENABLE_PRECOMPILED_HEADERS=OFF \
+      -D OPENCV_GENERATE_PKGCONFIG=ON \
+      -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.1.1/modules/ ..
+```
+
+
+
+
+
+
