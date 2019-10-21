@@ -42,8 +42,21 @@ crw-rw----+  1 root video    81,   2 Oct 21 07:45 video12
 ## 3.使用树莓派摄像头获取图片
 raspistill -o image.jpg
 
+这里讲一下raspistill命令的相关参数和实验的具体效果：
 
+-v：调试信息查看
+-w：图像宽度
+-h：图像高度
+-rot：图像旋转角度，只支持 0、90、180、270 度（这里说明一下，测试发现其他角度的输入都会被转换到这四个角度之上）
+-o：图像输出地址，例如image.jpg，如果文件名为“-”，将输出发送至标准输出设备
+-t：获取图像前等待时间，默认为5000，即5秒
+-tl：多久执行一次图像抓取
 
+执行下面的指令：
+
+raspistill -o image%d.jpg -rot 180 -w 1024 -h 768 -t 20000 -tl 5000 -v
+
+ref:https://www.cnblogs.com/uestc-mm/p/7587783.html
 
 
 # 编译opencv
@@ -200,8 +213,27 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
       -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.1.1/modules/ ..
 ```
 
+### 配置 OpenCV 环境变量
+```
+### 编辑或新建 /etc/ld.so.conf.d/opencv.conf
+sudo vim /etc/ld.so.conf.d/opencv.conf
 
+### 添加下面这一句 表明opencv库的位置
+/usr/local/lib
 
+### 保存后退出，再输入命令
+sudo ldconfig
+
+### 然后更改环境变量，输入命令
+sudo gedit /etc/bash.bashrc
+
+### 打开之后，在文件最后面输入以下内容:
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig 
+export PKG_CONFIG_PATH
+source ~/.bashrc
+
+### 保存退出
+```
 
 
 
