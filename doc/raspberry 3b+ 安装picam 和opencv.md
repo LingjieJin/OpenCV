@@ -90,6 +90,40 @@ sudo vim /etc/fstab
 
 sudo reboot
 
+pi@raspberrypi:~/ $ cd /opt/
+pi@raspberrypi:/opt $ ls -al
+total 16
+drwxr-xr-x  4 root root 4096 Jul 10 01:13 .
+drwxr-xr-x 21 root root 4096 Jul 10 01:27 ..
+drwxr-xr-x  3 root root 4096 Jul 10 01:13 pigpio
+drwxr-xr-x  6 root root 4096 Jul 10 01:08 vc
+pi@raspberrypi:/opt $ sudo mkdir image
+pi@raspberrypi:/opt $ ls
+image  pigpio  vc
+pi@raspberrypi:/opt $ cd image/
+pi@raspberrypi:/opt/image $ ls
+pi@raspberrypi:/opt/image $ sudo touch swap
+pi@raspberrypi:/opt/image $ ls
+swap
+pi@raspberrypi:/opt/image $ sudo dd if=/dev/zero of=/opt/image/swap bs=1024 count=2048000
+2048000+0 records in
+2048000+0 records out
+2097152000 bytes (2.1 GB, 2.0 GiB) copied, 96.007 s, 21.8 MB/s
+pi@raspberrypi:/opt/image $ sudo mkswap /opt/image/swap
+mkswap: /opt/image/swap: insecure permissions 0644, 0600 suggested.
+Setting up swapspace version 1, size = 2 GiB (2097147904 bytes)
+no label, UUID=7b3e4f1c-6a69-42b0-ba8f-e8e9cc206098
+pi@raspberrypi:/opt/image $ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            924          67         262           9         594         780
+Swap:            99           4          95
+pi@raspberrypi:/opt/image $ sudo swapon /opt/image/swap
+swapon: /opt/image/swap: insecure permissions 0644, 0600 suggested.
+pi@raspberrypi:/opt/image $ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            924          67         262           9         594         780
+Swap:          2099           4        2095
+pi@raspberrypi:/opt/image $
 ```
 
 ## 依赖库安装
